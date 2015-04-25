@@ -1,0 +1,5 @@
+*.c
+*.o
+*.import.*
+*.so
+funky-test

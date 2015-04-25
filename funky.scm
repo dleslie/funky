@@ -21,12 +21,12 @@
 		 (begin
 		   (display (car lst)) (newline)
 		   el))
-		((_ lst el ..)
+		((_ lst el . rest)
 		 (begin
 		   (display (car lst)) (newline)
 		   el
-		   (expand-body (cdr lst) ..)))))
-	    . body))))))
+		   (expand-body (cdr lst) . rest)))))
+	    (expand-body funk . body)))))))
 
   ;; This is to demonstrate binding methods from constructed names
   (define-syntax define-funky-method
@@ -35,9 +35,8 @@
        (let ((funky (cadr expression))
 	     (name (caddr expression))
 	     (body (cdddr expression)))
-	 `(lambda (_)
-	    (define ,(inject (symbol-append funky '- name))
-	      (with-funky ,funky ,@body)))))))
+	 `(define ,(inject (symbol-append funky '- name))
+	    (lambda args (with-funky ,funky ,@body)))))))
 
   (define-funky booyah "Get up offa that thing And dance till you feel better Get up offa that thing Try to release the pressure")
 

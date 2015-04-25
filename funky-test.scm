@@ -3,7 +3,10 @@
 (define (script-method)
   (with-funky booyah
    (display "Sure\n")
-   (display "Whatever\n")))
+   (display "Whatever\n")
+   (splat)))
+
+(script-method)
 
 (booyah-library-method)
 
