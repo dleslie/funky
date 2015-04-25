@@ -1,0 +1,13 @@
+(compile -s -compile-syntax funky.scm -j funky)
+(compile -s -compile-syntax funky.import.scm)
+
+(install-extension
+ 'funky
+ '("funky.so" "funky.import.so")
+ '((syntax)
+   (import-only)
+   (version 0.1)
+   (static "funky.o")))
+
+
+
