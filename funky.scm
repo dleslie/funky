@@ -7,29 +7,38 @@
     (syntax-rules ()
       ((_ funk str)
        (define funk (apply circular-list (string-tokenize str))))))
+
+  ;; This handy macro allows the rebinding of symbols within a quoted context, and only that context
+  ;; From http://community.schemewiki.org/?scheme-faq-macros
+  (define-syntax let-alias 
+    (syntax-rules () 
+      ((_ ((id alias) ...) body ...) 
+       (let-syntax ((helper (syntax-rules () 
+			      ((_ id ...) (begin body ...))))) 
+	 (helper alias ...))))) 
   
   ;; This is to demonstrate an attempt to inject new bindings with syntax, but only at the syntax scope
   (define-syntax with-funky
     (syntax-rules ()
-      ((with-funky funk . body)
+      ((with-funky the-funk . body)
+       ;; The immediately-evaluated lambda keeps chicken from segfaulting; replace it with a begin and csc crashes
        ((lambda ()
-	  (let ((the-funk funk))
-	    ;; TODO: MAKE THIS WORK
-	    ;; This demonstrates injecting a symbol for the body to access
-	    (define (splat) (display (string-concatenate (flatten (zip funk (circular-list " "))))) (newline))
-	    ;; This demonstrates manipulating a form with sub-syntax
-	    (define-syntax expand-body
-	      (syntax-rules ()
-		((_ lst el)
-		 (begin
-		   (display (car lst)) (newline)
-		   el))
-		((_ lst el . rest)
-		 (begin
-		   (display (car lst)) (newline)
-		   el
-		   (expand-body (cdr lst) . rest)))))
-	    (expand-body funk . body)))))))
+	  ;; This demonstrates injecting a symbol for the body to access
+	  (define (local-splat)
+	    (display (string-concatenate (flatten (take the-funk 11) (take (circular-list " ") 11))))
+	    (newline))
+	  
+	   ;; This demonstrates manipulating a form with sub-syntax
+	  (define-syntax expand-body
+	    (syntax-rules ()
+	      ((_ lst) (begin))
+	      ((_ lst a . b)
+	       (let-alias
+		((splat local-splat))
+		 (display (car lst)) (newline)
+		 a
+		 (expand-body (cdr lst) . b)))))
+	  (expand-body the-funk . body))))))
 
   ;; This is to demonstrate binding methods from constructed names
   ;; This is -not- a R5RS standard form

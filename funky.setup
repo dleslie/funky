@@ -1,5 +1,5 @@
-(compile -s -compile-syntax funky.scm -j funky)
-(compile -s -compile-syntax funky.import.scm)
+(compile -s -d2 funky.scm -j funky)
+(compile -s -d2 funky.import.scm)
 
 (install-extension
  'funky
