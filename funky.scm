@@ -42,6 +42,7 @@
 
   ;; This is to demonstrate binding methods from constructed names
   ;; This is -not- a R5RS standard form
+  ;; R5RS can build new symbols in a similar manner, but the argument to the syntax has to be quoted (ew)
   (define-syntax define-funky-method
     (er-macro-transformer
      (lambda (expression inject compare)
